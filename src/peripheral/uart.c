@@ -1,9 +1,9 @@
 /* http://www.ganssle.com/tem/tem110.pdf */
 
 #include "peripheral/uart.h"
-#include <pps.h>
 #include "device/pinconfig.h"
 #include "common/globals.h"
+#include <pps.h>
 #include <string.h>
 
 #define BRG(br)     ((FCY/16U/br)-1U)
@@ -38,21 +38,7 @@ void uart_init(const uint32_t baudRate)
 //    memset((uint8_t *)&rxBuffer, 0x00, sizeof(rxBuffer));
 }
 
-void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void)
-{
-    _U1RXIF = 0;
 
-    volatile uint8_t c;
-    c = U1RXREG;
-
-    /* If the buffer is not full, store the character read in it */
-    if ((rxBuffer.head - rxBuffer.tail) < BUF_SIZE)
-    {
-        rxBuffer.head &= BUF_MASK;          // Wrap if necessary
-        rxBuffer.data[rxBuffer.head] = c;
-        ++rxBuffer.head;
-    }
-}
 
 uint8_t uart_charReady()
 {
@@ -81,6 +67,15 @@ void uart_putc(const uint8_t c)
 
 
 /* Private functions **********************************************************/
+
+static void uart_Pins()
+{
+    // Map PPS pins to periphereal functions
+    PPSUnLock;
+    PPSInput(IN_FN_PPS_U1RX, UART_RX);
+    PPSOutput(OUT_FN_PPS_U1TX, UART_TX);
+    PPSLock;
+}
 
 static void uart_Config(const uint32_t baudRate)
 {
@@ -132,11 +127,19 @@ static void uart_Config(const uint32_t baudRate)
     IEC0bits.U1RXIE = 1;            // Enable UART1 RX interrupt
 }
 
-static void uart_Pins()
+void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void)
 {
-    // Map PPS pins to periphereal functions
-    PPSUnLock;
-    PPSInput(IN_FN_PPS_U1RX, UART_RX);
-    PPSOutput(OUT_FN_PPS_U1TX, UART_TX);
-    PPSLock;
+    _U1RXIF = 0;
+
+    volatile uint8_t c;
+    c = U1RXREG;
+
+    /* If the buffer is not full, store the character read in it */
+    if ((rxBuffer.head - rxBuffer.tail) < BUF_SIZE)
+    {
+        rxBuffer.head &= BUF_MASK;          // Wrap if necessary
+        rxBuffer.data[rxBuffer.head] = c;
+        ++rxBuffer.head;
+    }
 }
+
