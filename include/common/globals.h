@@ -5,10 +5,10 @@
 #define TCY 25U             // Period in nanoseconds [ns]
 
 /* a=target variable, b=bit number to act upon 0-n */
-#define BIT_SET(a,b)    ( (a) |=  (1 << (b)) )
-#define BIT_CLR(a,b)    ( (a) &= ~(1 << (b)) )
-#define BIT_FLIP(a,b)   ( (a) ^=  (1 << (b)) )
-#define BIT_CHECK(a,b)  ( (a) & (1 << (b))   )
+#define BIT_SET(a,b)        ( (a) |=  (1 << (b)) )
+#define BIT_CLR(a,b)        ( (a) &= ~(1 << (b)) )
+#define BIT_FLIP(a,b)       ( (a) ^=  (1 << (b)) )
+#define BIT_CHECK(a,b)      ( (a) & (1 << (b))   )
 
 /* x=target variable, y=mask */
 #define BITMASK_SET(x,y)    ( (x) |=   (y)  )
