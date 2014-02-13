@@ -15,12 +15,7 @@
 /* Computes the timer period in [us] using a prescaler of 1 and TCY[ns] */
 #define TMR_PR_US(us)  (us * (1000U / TCY))
 
-/* Interrupt flags and enable bits*/
-#define TMR1_INT    3U
-#define TMR2_INT    7U
-#define TMR3_INT    8U
-#define TMR4_INT    11U
-#define TMR5_INT    12U
+
 
 static uint8_t timerINTF[] = {TMR1_INT, TMR2_INT, TMR3_INT, TMR4_INT, TMR5_INT};
 
@@ -46,7 +41,7 @@ void timer_set_ms(enum TIMER timer, uint16_t ms)
 {
     // Set prescaler value to 256
     TMR_PRES_256(*timerCON[timer]);
-              
+
     // ms max value is 400
     if (ms > 400U)
     {
@@ -66,7 +61,7 @@ void timer_set_us(enum TIMER timer, uint16_t us)
     {
         us = 999U;
     }
-    
+
     *timerTMR[timer] = 0x0000;          // Clear TMR register
     *timerPR[timer] = TMR_PR_US(us);    // Period (us)
 }
@@ -74,7 +69,7 @@ void timer_set_us(enum TIMER timer, uint16_t us)
 void timer_start(enum TIMER timer)
 {
     // Set TON bit of TCON register
-    TMR_ON(*timerCON[timer]);           
+    TMR_ON(*timerCON[timer]);
 
     // Clear interrupt flag and enable timer interrupt
     if (timer < TIMER4)
@@ -92,7 +87,7 @@ void timer_start(enum TIMER timer)
 void timer1_stop(enum TIMER timer)
 {
     // Clear TON bit of TCON register
-    TMR_OFF(*timerCON[timer]);          
+    TMR_OFF(*timerCON[timer]);
 
     // Clear and disable timer interrupt
     if (timer < TIMER4)
