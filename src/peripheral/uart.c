@@ -118,7 +118,7 @@ static void uart_Config(const uint32_t baudRate)
                             //                  *AFTER* UARTEN is set to 1
             /* Bit 9 is read-only (UTXBF) */
             /* Bit 8 is read-only (TRMT) */
-            (0U <<  7)  |   // URXISEL<7:6> = 00 Interrupt flag bit is set when
+            (0U <<  6)  |   // URXISEL<7:6> = 00 Interrupt flag bit is set when
                             //                  a character is received
             (0U <<  5)  |   // ADDEN = 0    Address detect mode disabled
             /* Bit 4 is read-only */
