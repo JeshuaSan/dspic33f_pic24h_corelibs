@@ -1,6 +1,6 @@
 #include <pps.h>
-#include "spi.h"
-#include "../pinconfig.h"
+#include "peripheral/spi.h"
+#include "device/pinconfig.h"
 
 /*
  * MOSI, MISO and CLK pins must be defined

@@ -1,5 +1,5 @@
-#include "timer1.h"
-#include "../globals.h"
+#include "peripheral/timer.h"
+#include "common/globals.h"
 #include <xc.h>
 
 /* TxCON:TON<15> => Timer enable/disable*/

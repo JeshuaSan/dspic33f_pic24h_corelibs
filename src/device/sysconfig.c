@@ -1,6 +1,6 @@
-#include "sysconfig.h"
+#include "device/sysconfig.h"
+#include "device/pinconfig.h"
 #include <xc.h>
-#include "pinconfig.h"
 
 static void sys_ConfigClock(void);
 static void sys_ConfigPins(void);

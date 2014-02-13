@@ -1,9 +1,9 @@
 /* http://www.ganssle.com/tem/tem110.pdf */
 
-#include "uart.h"
+#include "peripheral/uart.h"
 #include <pps.h>
-#include "../pinconfig.h"
-#include "../globals.h"
+#include "device/pinconfig.h"
+#include "common/globals.h"
 #include <string.h>
 
 #define BRG(br)     ((FCY/16U/br)-1U)

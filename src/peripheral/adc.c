@@ -1,6 +1,6 @@
-#include "adc.h"
-#include "timer/timer1.h"
-#include "../globals.h"
+#include "peripheral/adc.h"
+#include "peripheral/timer.h"
+#include "common/globals.h"
 #include <xc.h>
 #include <stdint.h>
 
