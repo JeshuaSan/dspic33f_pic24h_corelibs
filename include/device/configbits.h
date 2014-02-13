@@ -1,12 +1,7 @@
-/*
- * File:   config.h
- * Author: jss
- *
- * Created on December 27, 2013, 7:11 PM
- */
-
 #ifndef CONFIG_H
 #define	CONFIG_H
+
+#include <xc.h>
 
 // FBS
 #pragma config BWRP = WRPROTECT_OFF     // Boot Segment Write Protect (Boot Segment may be written)
@@ -48,8 +43,6 @@
 // FICD
 #pragma config ICS = PGD1               // Comm Channel Select (Communicate on PGC1/EMUC1 and PGD1/EMUD1)
 #pragma config JTAGEN = OFF             // JTAG Port Enable (JTAG is Disabled)
-
-
 
 
 #endif	/* CONFIG_H */

@@ -1,10 +1,3 @@
-/*
- * File:   pinconfig.h
- * Author: jesus
- *
- * Created on January 28, 2014, 10:58 PM
- */
-
 #ifndef PINCONFIG_H
 #define	PINCONFIG_H
 
