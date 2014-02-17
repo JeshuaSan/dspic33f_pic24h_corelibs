@@ -3,10 +3,7 @@
 
 #include <xc.h>
 #include <pps.h>
-
-/*
- * Pin definitions
- */
+#include "peripheral/pps.h"
 
 // LED
 #define LED             LATAbits.LATA4      // LED
@@ -31,6 +28,11 @@
 #define SPI_MOSI        OLED_DATA
 #define SPI_CLK         OLED_CLK
 
+// QEI
+#define QEI1_A          PPS_IN_PIN_2
+#define QEI1_B          PPS_IN_PIN_3
+#define QEI2_A          PPS_IN_PIN_4
+#define QEI2_B          PPS_IN_PIN_5
 
 
 #endif	/* PINCONFIG_H */
