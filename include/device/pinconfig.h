@@ -29,10 +29,10 @@
 #define SPI_CLK         OLED_CLK
 
 // QEI
-#define QEI1_A          PPS_IN_PIN_2
-#define QEI1_B          PPS_IN_PIN_3
-#define QEI2_A          PPS_IN_PIN_4
-#define QEI2_B          PPS_IN_PIN_5
+#define QE1_A           IN_PIN_PPS_RP2
+#define QE1_B           IN_PIN_PPS_RP3
+#define QE2_A           IN_PIN_PPS_RP4
+#define QE2_B           IN_PIN_PPS_RP5
 
 
 #endif	/* PINCONFIG_H */

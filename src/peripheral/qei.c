@@ -2,17 +2,15 @@
 #include "device/pinconfig.h"
 #include "common/globals.h"
 #include "common/types.h"
-#include "peripheral/pps.h"
+#include <pps.h>
 
 
 void qei_init(enum QEI qei)
 {
 
     // Map PPS pins to periphereal functions
-    PPS_UNLOCK();
-
-    PPS_MAP_IN_QE1A(0);
-    PPS_MAP_IN_QE1B(1);
-
-    PPS_LOCK();
+    PPSUnLock;
+    PPSInput(IN_FN_PPS_QEA1, QE1_A);
+    PPSInput(IN_FN_PPS_QEB1, QE1_B);
+    PPSLock;
 }

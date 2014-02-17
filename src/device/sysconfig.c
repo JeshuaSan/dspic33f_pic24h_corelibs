@@ -50,7 +50,7 @@ static void sys_ConfigClock()
     __builtin_write_OSCCONH(0x03);
     __builtin_write_OSCCONL(0x01);
 
-#if !defined(__MPLAB_SIM)
+#if !defined(_MPLAB_SIM)
     /* Wait fo clock switch to occur */
     while(OSCCONbits.COSC != 0x03);
 

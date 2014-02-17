@@ -5,6 +5,7 @@
 #include "common/globals.h"
 #include <pps.h>
 #include <string.h>
+#include <stdint.h>
 
 #define BRG(br)     ((FCY/16U/br)-1U)
 
@@ -26,15 +27,15 @@ typedef struct tagBuffer {
 static volatile Buffer_t rxBuffer;
 
 /* Private prototypes *********************************************************/
-static void uart_Config(const uint32_t baudRate);
-static void uart_Pins(void);
+static void uart_config(const uint32_t baudRate);
+static void uart_pins(void);
 
 /* Public funtions ************************************************************/
 
 void uart_init(const uint32_t baudRate)
 {
-    uart_Pins();
-    uart_Config(baudRate);
+    uart_pins();
+    uart_config(baudRate);
 //    memset((uint8_t *)&rxBuffer, 0x00, sizeof(rxBuffer));
 }
 
@@ -68,7 +69,7 @@ void uart_putc(const uint8_t c)
 
 /* Private functions **********************************************************/
 
-static void uart_Pins()
+static void uart_pins(void)
 {
     // Map PPS pins to periphereal functions
     PPSUnLock;
@@ -77,7 +78,7 @@ static void uart_Pins()
     PPSLock;
 }
 
-static void uart_Config(const uint32_t baudRate)
+static void uart_config(const uint32_t baudRate)
 {
     U1BRG = BRG(baudRate);          // Set baudrate
 
