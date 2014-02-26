@@ -19,6 +19,12 @@ void mcpwm_setDC(enum MC_PWM reg, uint16_t dutycycle)
     *dc[reg] = dutycycle;
 }
 
+void mcpwm_setDCPC(enum MC_PWM reg, uint16_t dutycyclePC) {
+    vuint32_t maxDC = (P1TPER + 1) * 2;
+    uint32_t dutycycle = (maxDC * dutycyclePC) / 100;
+    mcpwm_setDC(reg, dutycycle);
+}
+
 void mcpwm_start(void)
 {
     BIT_SET(P1TCON, 15);
