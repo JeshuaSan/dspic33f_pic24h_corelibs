@@ -1,5 +1,6 @@
 #include "peripheral/timer.h"
 #include "common/globals.h"
+#include "common/types.h"
 #include <xc.h>
 
 /* TxCON:TON<15> => Timer enable/disable*/
@@ -19,12 +20,9 @@
 
 static uint8_t timerINTF[] = {TMR1_INT, TMR2_INT, TMR3_INT, TMR4_INT, TMR5_INT};
 
-typedef volatile uint16_t vuint16_t;
-typedef vuint16_t* sfr_t;
-
-static sfr_t timerCON[] = {&T1CON, &T2CON, &T3CON, &T4CON, &T5CON};
-static sfr_t timerPR[] = {&PR1, &PR2, &PR3, &PR4, &PR5};
-static sfr_t timerTMR[] = {&TMR1, &TMR2, &TMR3, &TMR4, &TMR5};
+static vuint16_t* timerCON[] = {&T1CON, &T2CON, &T3CON, &T4CON, &T5CON};
+static vuint16_t* timerPR[] = {&PR1, &PR2, &PR3, &PR4, &PR5};
+static vuint16_t* timerTMR[] = {&TMR1, &TMR2, &TMR3, &TMR4, &TMR5};
 
 void timer_init(enum TIMER timer)
 {
@@ -84,7 +82,7 @@ void timer_start(enum TIMER timer)
     }
 }
 
-void timer1_stop(enum TIMER timer)
+void timer_stop(enum TIMER timer)
 {
     // Clear TON bit of TCON register
     TMR_OFF(*timerCON[timer]);
