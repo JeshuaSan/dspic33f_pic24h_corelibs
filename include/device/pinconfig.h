@@ -34,6 +34,10 @@
 #define QE2_A           IN_PIN_PPS_RP4
 #define QE2_B           IN_PIN_PPS_RP5
 
+// IC
+#define IC_1            QE1_A
+#define IC_2            QE2_A
+
 
 #endif	/* PINCONFIG_H */
 
