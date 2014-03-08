@@ -3,7 +3,6 @@
 
 #include <xc.h>
 #include <pps.h>
-#include "peripheral/pps.h"
 
 // LED
 #define LED             LATAbits.LATA4      // LED
