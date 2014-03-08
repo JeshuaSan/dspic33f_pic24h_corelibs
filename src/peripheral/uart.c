@@ -3,6 +3,7 @@
 #include "peripheral/uart.h"
 #include "device/pinconfig.h"
 #include "common/globals.h"
+#include "common/types.h"
 #include <pps.h>
 #include <string.h>
 #include <stdint.h>
@@ -128,11 +129,11 @@ static void uart_config(const uint32_t baudRate)
     IEC0bits.U1RXIE = 1;            // Enable UART1 RX interrupt
 }
 
-void __attribute__((__interrupt__, no_auto_psv)) _U1RXInterrupt(void)
+void _ISR_NOPSV _U1RXInterrupt(void)
 {
     _U1RXIF = 0;
 
-    volatile uint8_t c;
+    vuint8_t c;
     c = U1RXREG;
 
     /* If the buffer is not full, store the character read in it */
