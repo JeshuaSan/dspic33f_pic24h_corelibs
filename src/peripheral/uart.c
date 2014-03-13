@@ -5,7 +5,7 @@
 #include "common/globals.h"
 #include "common/types.h"
 #include <pps.h>
-#include <string.h>
+//#include <string.h>
 #include <stdint.h>
 
 #define BRG(br)     ((FCY/16U/br)-1U)
@@ -26,6 +26,7 @@ typedef struct tagBuffer {
 } Buffer_t;
 
 static volatile Buffer_t rxBuffer;
+static volatile Buffer_t txBuffer;
 
 /* Private prototypes *********************************************************/
 static void uart_config(const uint32_t baudRate);
@@ -64,7 +65,14 @@ int8_t uart_getc()
 
 void uart_putc(const uint8_t c)
 {
-    U1TXREG = c;
+    /* If the buffer is not full, store the character read in it */
+    if ((txBuffer.head - txBuffer.tail) < BUF_SIZE)
+    {
+        txBuffer.head &= BUF_MASK;          // Wrap if necessary
+        txBuffer.data[txBuffer.head] = c;
+        ++txBuffer.head;
+    }
+    _U1TXIE = 1;
 }
 
 
@@ -142,6 +150,22 @@ void _ISR_NOPSV _U1RXInterrupt(void)
         rxBuffer.head &= BUF_MASK;          // Wrap if necessary
         rxBuffer.data[rxBuffer.head] = c;
         ++rxBuffer.head;
+    }
+}
+
+void _ISR_NOPSV _U1TXInterrupt(void)
+{
+    /* If the buffer is not empty, return the last character stored */
+    if ((txBuffer.head - txBuffer.tail) != 0 )
+    {
+        _U1TXIF = 0;
+        txBuffer.tail &= BUF_MASK;          // Wrap if necessary
+        U1TXREG = txBuffer.data[txBuffer.tail];
+        ++txBuffer.tail;
+    }
+    else
+    {
+        _U1TXIE = 0;
     }
 }
 
