@@ -141,8 +141,7 @@ void _ISR_NOPSV _U1RXInterrupt(void)
 {
     _U1RXIF = 0;
 
-    vuint8_t c;
-    c = U1RXREG;
+    vuint8_t c = U1RXREG;
 
     /* If the buffer is not full, store the character read in it */
     if ((rxBuffer.head - rxBuffer.tail) < BUF_SIZE)
