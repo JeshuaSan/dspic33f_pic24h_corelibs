@@ -8,7 +8,7 @@
 //#include <string.h>
 #include <stdint.h>
 
-#define BRG(br)     ((FCY/16U/br)-1U)
+#define BRG(br)     ((FCY/16U/br) - 1U)
 
 #if !defined(UART_RX) || !defined (UART_TX)
 #error Must define UART_RX and UART_TX
@@ -17,20 +17,24 @@
 
 /* Private variables **********************************************************/
 #define BUF_SIZE    (64U)
-#define BUF_MASK    (BUF_SIZE - 1)
+#define BUF_MASK    (BUF_SIZE - 1U)
 
-typedef struct tagBuffer {
+typedef struct tagFifoBuffer {
     uint8_t data[BUF_SIZE];
     uint8_t head;
     uint8_t tail;
-} Buffer_t;
+} fifoBuffer_t;
 
-static volatile Buffer_t rxBuffer;
-static volatile Buffer_t txBuffer;
+static volatile fifoBuffer_t rxBuffer;
+static volatile fifoBuffer_t txBuffer;
 
 /* Private prototypes *********************************************************/
 static void uart_config(const uint32_t baudRate);
 static void uart_pins(void);
+
+static inline vuint8_t fifo_len(volatile fifoBuffer_t* fifoBuffer);
+static inline void fifo_put(volatile fifoBuffer_t* fifoBuffer, const vuint8_t c);
+static inline vuint8_t fifo_get(volatile fifoBuffer_t* fifoBuffer);
 
 /* Public funtions ************************************************************/
 
@@ -54,11 +58,12 @@ int8_t uart_getc()
     int8_t c = -1;
 
     /* If the buffer is not empty, return the last character stored */
-    if ((rxBuffer.head - rxBuffer.tail) != 0 )
+//    if ((rxBuffer.head - rxBuffer.tail) != 0 )
+    if (fifo_len(&rxBuffer) != 0)
     {
-        rxBuffer.tail &= BUF_MASK;          // Wrap if necessary
-        c = rxBuffer.data[rxBuffer.tail];
-        ++rxBuffer.tail;
+//        c = *( rxBuffer.data + (rxBuffer.tail & BUF_MASK) );
+//        ++rxBuffer.tail;
+        c = fifo_get(&rxBuffer);
     }
     return c;
 }
@@ -66,13 +71,14 @@ int8_t uart_getc()
 void uart_putc(const uint8_t c)
 {
     /* If the buffer is not full, store the character read in it */
-    if ((txBuffer.head - txBuffer.tail) < BUF_SIZE)
+    if (fifo_len(&txBuffer) < BUF_SIZE)
     {
-        txBuffer.head &= BUF_MASK;          // Wrap if necessary
-        txBuffer.data[txBuffer.head] = c;
-        ++txBuffer.head;
+//        /* Read the byte and wrap if necessary */
+//        *(txBuffer.data + (txBuffer.head & BUF_MASK)) = c;
+//        ++txBuffer.head;
+        fifo_put(&txBuffer, c);
+        _U1TXIE = 1;
     }
-    _U1TXIE = 1;
 }
 
 
@@ -157,10 +163,10 @@ void _ISR_NOPSV _U1TXInterrupt(void)
     /* If the buffer is not empty, return the last character stored */
     if ((txBuffer.head - txBuffer.tail) != 0 )
     {
-        _U1TXIF = 0;
-        txBuffer.tail &= BUF_MASK;          // Wrap if necessary
-        U1TXREG = txBuffer.data[txBuffer.tail];
+        /* Put the corresponding data on the register and wrap if necessary */
+        U1TXREG = *(txBuffer.data + (txBuffer.tail & BUF_MASK));
         ++txBuffer.tail;
+        _U1TXIF = 0;
     }
     else
     {
@@ -168,3 +174,21 @@ void _ISR_NOPSV _U1TXInterrupt(void)
     }
 }
 
+static inline vuint8_t fifo_len(volatile fifoBuffer_t* fifoBuffer)
+{
+    return fifoBuffer->head - fifoBuffer->tail;
+}
+
+static inline void fifo_put(volatile fifoBuffer_t* fifoBuffer, const vuint8_t c)
+{
+    /* Read the byte and wrap if necessary */
+    *(fifoBuffer->data + (fifoBuffer->head & BUF_MASK)) = c;
+    ++fifoBuffer->head;
+}
+
+static inline vuint8_t fifo_get(volatile fifoBuffer_t* fifoBuffer)
+{
+    vuint8_t c = *( fifoBuffer->data + (fifoBuffer->tail & BUF_MASK) );
+    ++fifoBuffer->tail;
+    return c;
+}
