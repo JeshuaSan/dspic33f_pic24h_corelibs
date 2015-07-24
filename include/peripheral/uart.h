@@ -13,7 +13,7 @@
 void uart_init(const uint32_t baudRate);
 
 void uart_putc(const uint8_t c);
-int8_t uart_getc(void);
+uint8_t uart_getc(void);
 uint8_t uart_charReady(void);
 
 #endif	/* UART_H */

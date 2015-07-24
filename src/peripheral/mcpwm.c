@@ -3,23 +3,23 @@
 #include "common/types.h"
 
 /* Private prototypes *********************************************************/
-static void mcpwm_configReg();
-static void mcpwm_setFreq(uint16_t freq);
+static void mcpwm_configReg(ePTCKPS ps);
+static void mcpwm_setFreq(uint16_t freq, ePTCKPS ps);
 
 /* Public functions ***********************************************************/
-void mcpwm_init(uint16_t freq)
+void mcpwm_init(uint16_t freq, ePTCKPS ps)
 {
-    mcpwm_configReg();
-    mcpwm_setFreq(freq);
+    mcpwm_configReg(ps);
+    mcpwm_setFreq(freq, ps);
 }
 
-void mcpwm_setDC(enum MC_PWM reg, uint16_t dutycycle)
+void mcpwm_setDC(eMC_PWM reg, uint16_t dutycycle)
 {
     vuint16_t *dc[] = {&P1DC1, &P1DC2};
     *dc[reg] = dutycycle;
 }
 
-void mcpwm_setDCPC(enum MC_PWM reg, uint16_t dutycyclePC)
+void mcpwm_setDCPC(eMC_PWM reg, uint16_t dutycyclePC)
 {
     vuint32_t maxDC = (P1TPER + 1) * 2;
     uint32_t dutycycle = (maxDC * dutycyclePC) / 100;
@@ -38,7 +38,7 @@ void mcpwm_stop(void)
 
 
 /* Private functions **********************************************************/
-static void mcpwm_configReg()
+static void mcpwm_configReg(ePTCKPS ps)
 {
     P1TCON =
             (0U << 15)  |   /* PTEN = 0     PWM time base is off */
@@ -46,7 +46,7 @@ static void mcpwm_configReg()
             (0U << 13)  |   /* PTSDL = 0    PWM time base runs in CPU idle mode */
                                             // bit <12:8> uimplemented
             (0U << 4)   |   /* PTOPS<7:4> = 0   1:1 postscale */
-            (0U << 2)   |   /* PTCKPS<3:2> = 0  1:1 prescale */
+            (ps << 2)   |   /* PTCKPS<3:2> = 0  1:1 prescale */
             (0U << 0);      /* PTMOD<1:0> = 0   PWM time base operates in Free-running mode */
 
     PWM1CON1 =
@@ -72,10 +72,11 @@ static void mcpwm_configReg()
             (0U << 0);      /* UDIS = 0     Updates from Duty Cycle and Period Buffer registers are enabled */
 
 }
-static void mcpwm_setFreq(uint16_t freq)
+static void mcpwm_setFreq(uint16_t freq, ePTCKPS ps)
 {
     // PxTPER = (FCY/(freq * PTCKPS)) - 1
     // PTCKPS = 1
-    uint16_t ptper = (FCY/(uint32_t)freq) - 1;
+    uint8_t _ps[] = {1, 4, 16, 64};
+    uint16_t ptper = (FCY/((uint32_t)freq * _ps[ps])) - 1;
     P1TPER = ptper;
 }

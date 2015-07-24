@@ -25,7 +25,7 @@ typedef struct tagFifoBuffer {
     uint8_t tail;
 } fifoBuffer_t;
 
-static volatile fifoBuffer_t rxBuffer;
+static volatile fifoBuffer_t rxBuffer = {0};
 static volatile fifoBuffer_t txBuffer;
 
 /* Private prototypes *********************************************************/
@@ -42,7 +42,7 @@ void uart_init(const uint32_t baudRate)
 {
     uart_pins();
     uart_config(baudRate);
-//    memset((uint8_t *)&rxBuffer, 0x00, sizeof(rxBuffer));
+ //   memset((uint8_t *)&rxBuffer, 0x00, sizeof(rxBuffer));
 }
 
 
@@ -53,9 +53,10 @@ uint8_t uart_charReady()
     return (rxBuffer.head - rxBuffer.tail) != 0;
 }
 
-int8_t uart_getc()
+uint8_t uart_getc()
 {
-    int8_t c = -1;
+    //uint8_t c = -1;
+    uint8_t c = 0;
 
     /* If the buffer is not empty, return the last character stored */
 //    if ((rxBuffer.head - rxBuffer.tail) != 0 )
