@@ -36,6 +36,8 @@
 // IC
 #define IC_1            QE1_A
 #define IC_2            QE2_A
+#define IC_3            QE1_B
+#define IC_4            QE2_B
 
 
 #endif	/* PINCONFIG_H */

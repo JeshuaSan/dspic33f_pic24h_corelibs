@@ -25,7 +25,7 @@ typedef struct tagFifoBuffer {
     uint8_t tail;
 } fifoBuffer_t;
 
-static volatile fifoBuffer_t rxBuffer = {0};
+static volatile fifoBuffer_t rxBuffer;
 static volatile fifoBuffer_t txBuffer;
 
 /* Private prototypes *********************************************************/

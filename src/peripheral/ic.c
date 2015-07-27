@@ -86,7 +86,6 @@ void _ISR_NOPSV _IC2Interrupt(void)
 {
     vuint16_t period1 = IC2BUF;
     vuint16_t period2 = IC2BUF;
-
     if (period2 > period1)
     {
         icPeriod[1] = period2 - period1;

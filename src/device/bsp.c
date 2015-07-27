@@ -1,6 +1,10 @@
-#include "device/sysconfig.h"
-#include "device/pinconfig.h"
+#include "device/bsp.h"
+#include "peripheral/timer.h"
 #include <xc.h>
+
+
+static vuint32_t _tick[4] = {0};
+vuint8_t _sysTick = 0;
 
 static void sys_ConfigClock(void);
 static void sys_ConfigPins(void);
@@ -9,6 +13,10 @@ void sys_init()
 {
     sys_ConfigClock();
     sys_ConfigPins();
+
+    timer_init(TIMER1);
+    timer_set_ms(TIMER1, 1);
+    timer_start(TIMER1);
 }
 
 static void sys_ConfigClock()
@@ -34,16 +42,16 @@ static void sys_ConfigClock()
      * 
      *   Fcy = Fosc / 2 = 39936000 [Hz]
      */
-    
+
     // PLLFBD: PLL Feedback Divisor Resgister
     PLLFBD = 128;           /* PLLDIV<8:0> = 128    M, PLL Multiplier */
-    
+
     // CLKDIV: Clock Divisor Register
     CLKDIV = 
-            (0U << 6)   |   /* PLLPOST<7:6> = 00    Output divided by 2
-                                                    N2, PLL Postscaller */
-            (4U << 0);      /* PLLPRE(4:0> = 4      Input divided by 6 
-                                                    N1, PLL Prescaler */
+        (0U << 6)   |   /* PLLPOST<7:6> = 00    Output divided by 2
+                           N2, PLL Postscaller */
+        (4U << 0);      /* PLLPRE(4:0> = 4      Input divided by 6 
+                           N1, PLL Prescaler */
 
 
     /* Initiate clock switch to Primary Oscillator with PLL (NOSc = 0b011) */
@@ -68,4 +76,28 @@ static void sys_ConfigPins()
     LED_TRS = 0;
 }
 
+void _ISR_NOPSV _T1Interrupt(void)
+{
+    BIT_CLR(IFS0, TMR1_INT);        // Clear Timer1 interrupt flag
 
+    BIT_SET(_sysTick, SYSTICK_1MS); // 1 ms
+
+    if (++_tick[SYSTICK_10MS] > 10U)
+    {
+        BIT_SET(_sysTick, SYSTICK_10MS);    // 10 ms
+        _tick[SYSTICK_10MS] = 0;
+
+        if (++_tick[SYSTICK_100MS] > 10U)
+        {
+            BIT_SET(_sysTick, SYSTICK_100MS);   // 100 ms
+            _tick[SYSTICK_100MS] = 0;
+
+            if (++_tick[SYSTICK_1000MS] > 10U)
+            {
+                BIT_SET(_sysTick, SYSTICK_1000MS);  // 1000 ms
+                BIT_TGL(LATA, 4);
+                _tick[SYSTICK_1000MS] = 0;
+            }
+        }
+    }
+}
